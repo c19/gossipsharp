@@ -17,7 +17,8 @@ namespace GossipSharp
             var nodeConfig1 = new GossipNodeConfig(new IPEndPoint(IPAddress.Any, 30000), "tag1");
             var nodeConfig2 = new GossipNodeConfig(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 30001), "tag2");
 
-            var bulkMessage = new RawGossipMessage(0, new byte[1024 * 1024]);
+            var buffer = new byte[1024 * 1024];
+            var bulkMessage = new RawGossipMessage(0, buffer);
 
             using (var node1 = new GossipNode(nodeConfig1, clusterConfig))
             using (var node2 = new GossipNode(nodeConfig2, clusterConfig))
@@ -33,7 +34,7 @@ namespace GossipSharp
 
                 node1.Cluster.BroadcastMessageAsync(new RawGossipMessage(1, Encoding.UTF8.GetBytes("Hello World!")), m => m.HasTag("tag2")).Wait();
 
-                const int iterations = 500;
+                const int iterations = 1000;
                 var sw = Stopwatch.StartNew();
                 var tasks = new List<Task>();
                 for (var i = 0; i < iterations; i++)
@@ -41,7 +42,12 @@ namespace GossipSharp
                     tasks.Add(node1.Cluster.BroadcastMessageAsync(bulkMessage));
                 }
                 Task.WaitAll(tasks.ToArray());
-                Debug.WriteLine("{0} iterations of {1} MB transferred in {2} ({3} MB/s)", iterations, bulkMessage.Buffer.Length / 1024 / 1024, sw.Elapsed, iterations * 1000 / sw.ElapsedMilliseconds);
+               Console.WriteLine("{0} iterations of {1} KB transferred in {2}ms ({3:F1} ops/s, {4:F1} MB/s)", 
+                    iterations, 
+                    buffer.Length / 1024,
+                    sw.ElapsedMilliseconds, 
+                    iterations / (sw.ElapsedMilliseconds / 1000m), 
+                    iterations * buffer.Length / (sw.ElapsedMilliseconds / 1000m) / 1024m / 1024m);
             }
 
             Console.ReadLine();
