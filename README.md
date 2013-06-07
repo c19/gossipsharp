@@ -18,4 +18,4 @@ What the protocol DOES NOT support:
 See also:
 ---------
 
-[MassTransit - Service Bus for .NET using RabbitMQ](http://masstransit-project.com/)
+[MassTransit - Service Bus for .NET](http://masstransit-project.com/)
