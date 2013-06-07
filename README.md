@@ -14,3 +14,8 @@ What the protocol DOES NOT support:
 
 - cluster routing (nodes have to have direct TCP connections to each other)
 - encryption (however the common cluster is safely hashed)
+
+See also:
+---------
+
+[MassTransit - Service Bus for .NET using RabbitMQ](http://masstransit-project.com/)
